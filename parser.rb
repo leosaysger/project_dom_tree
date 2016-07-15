@@ -79,7 +79,7 @@ class Parser
   def outputter(root)
     stack = []
     output = ''
-    output += "<#{root.type} #{root.attributes}> \n #{root.text_before}" 
+    output += "<#{root.type} #{root.attributes}> \n #{root.text_before}"
     stack << root
     current_node = root
     until stack.empty?
@@ -89,23 +89,24 @@ class Parser
       else
         output += "<#{current_node.type} #{current_node.attributes}> \n #{current_node.text_before}"
         stack << current_node
-        
 
-
-
+      end
+    end
         # current_node.children.each do |child|
         #   output += "<#{child.type} #{child.attributes}> \n #{child.text_before}"
         # end
-        # stack << child 
-
-
+        # stack << child
   end
+
+
 
 end
 
-t = Parser.new("<div>  div text before  <p>    p text  </p>  <div>    more div text  </div>  div text after</div>")
+t = Parser.new("<div>  div text before  <p>    p text  </p> <div>    more div text  </div>  div text after</div>")
+
 t.parser_script
-puts t.outputter(t.root)
+p t.root
+# puts t.outputter(t.root)
 
   # parse_tag("<p class='foo bar' id='baz' name='fozzie'>")
   # html_string = "<div>  div text before  <p>    p text  </p>  <div>    more div text  </div>  div text after</div>"
