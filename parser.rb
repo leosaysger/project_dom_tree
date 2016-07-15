@@ -1,14 +1,22 @@
+Tag = Struct.new(:type, :attributes, :child, :text)
+
+# def load_html
+#   str = File.readlines('test.html').map(&:chomp).join
+# end
+
+# p load_html
+# def parser_script
+
+#   html = load_html
+#   html.match
+# end
+
+html_string = "<div>  div text before  <p>    p text  </p>  <div>    more div text  </div>  div text after</div>"
+
+def parser_script(string)
+  
 
 
-def load_html
-  str = File.readlines('test.html').map(&:chomp).join
-end
-
-p load_html
-def parser_script
-
-  html = load_html
-  html.match
 end
 
 
@@ -34,8 +42,6 @@ def parse_tag(tag)
   usable = /<(.*)>/.match(tag).captures.join
   usable.gsub(/ =/,"=")
 
-  tags["type"] = usable[/^([\w\-]+)/]
-
   quote_regex = /'(.*?)'/
   equal_regex = /([\w\-]+)=/
 
@@ -49,8 +55,12 @@ def parse_tag(tag)
       tags[k] = info[index]
     end
   end
+
+  t = Tag.new(usable[/^([\w\-]+)/], tags)
+  p t
 end
 
 
 # converts HTML into a hash containing key attributes
 parse_tag("<p class='foo bar' id='baz' name='fozzie'>")
+
