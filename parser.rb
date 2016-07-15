@@ -1,36 +1,59 @@
-Tag = Struct.new(:type, :attributes, :child, :text)
-class Parser
+require 'pry'
 
+
+Tag = Struct.new(:type, :attributes, :child, :text)
+
+
+class Parser
   def initialize(str)
     @str = str
   end
 
   def parser_script
-
+    binding.pry
     stack = []
   # get type+description of outer tags to start the root
-    Tag.new()
+    @root = parse_tag
+    @root.text = get_text
+    stack << @root
+    while stack.length > 0
+
+      if check_closing
+        stack.pop
+        delete_tag
+      else
+        new_tag = parse_tag
+        stack.last.text = get_text
+        stack << new_tag
+      end
+    end
+
+      # stack.last.text = get_text
+    
 
   end
 
   def check_closing()
-    regex = /^<\//
     # if the beginning is this, return true, else false.
-    if @str
+    /^<\// === @str
+  end
+
+  def delete_tag
+    @str.gsub!(/^<.*?>/, '')
   end
 
   def get_text
     # get text until '<'
     regex = /^(.*?)</
     text = @str[regex]
-    @str.gsub!(regexp,'')
+    @str.gsub!(regex,'')
     text
   end
 
 
   def parse_tag
     tags = {}
-    usable = /<(.*)>/.match(@str).captures.join
+    usable = /<(.*?)>/.match(@str).captures.join
     usable.gsub(/ =/,"=")
 
     quote_regex = /'(.*?)'/
@@ -46,11 +69,16 @@ class Parser
         tags[k] = info[index]
       end
     end
-    Tag.new(usable[/^([\w\-]+)/], tags)
-    @str.gsub!(regexp,'')
+    t = Tag.new(usable[/^([\w\-]+)/], tags)
+    delete_tag
+    t
   end
 
 end
+
+t = Parser.new("<div>  div text before  <p>    p text  </p>  <div>    more div text  </div>  div text after</div>")
+t.parser_script
+
 
   # parse_tag("<p class='foo bar' id='baz' name='fozzie'>")
   # html_string = "<div>  div text before  <p>    p text  </p>  <div>    more div text  </div>  div text after</div>"
