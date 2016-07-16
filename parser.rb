@@ -1,20 +1,38 @@
 require 'pry'
 
 
-Tag = Struct.new(:type, :attributes, :children, :text_before, :text_after)
+Tag = Struct.new(:type, :attributes, :children, :text_before, :text_after, :depth)
 
+class Tag
+
+  def to_s
+    "#{attributes}"
+  end
+
+  def inspect
+    "#{attributes}"
+  end
+
+
+end
 
 class Parser
-  attr_reader :root
+  attr_reader :root, :output
   def initialize(str)
     @str = str
+    @output = ''
   end
+
+  # def load_html
+  #   @str = File.readlines('test.html').map(&:chomp).join
+  # end
 
   def parser_script
     stack = []
   # get type+description of outer tags to start the root
     @root = parse_tag
     @root.text_before = get_text
+    @root.depth = 0
     stack << @root
     while stack.length > 0
       stack.last.text_after += get_text if stack.last.text_after
@@ -26,6 +44,7 @@ class Parser
         new_tag = parse_tag
         # binding.pry
         stack.last.children << new_tag
+        new_tag.depth = stack.last.depth + 1
         stack << new_tag
         stack.last.text_before += get_text if stack.last.text_before
       end
@@ -58,17 +77,19 @@ class Parser
     usable = /<(.*?)>/.match(@str).captures.join
     usable.gsub(/ =/,"=")
 
-    quote_regex = /'(.*?)'/
+    quote_regex = /"(.*?)"/
     equal_regex = /([\w]+)=/
 
     key = usable.scan(equal_regex).flatten
     info = usable.scan(quote_regex).flatten
 
     key.each_with_index do |k, index|
-      if info[index].include?(' ')
-        tags[k] = info[index].split(' ')
-      else
-        tags[k] = info[index]
+      if info[index] 
+        if info[index].include?(' ')
+          tags[k] = info[index].split(' ')
+        else
+          tags[k] = info[index]
+        end
       end
     end
     t = Tag.new(usable[/^([\w\-]+)/], tags, [], "", "")
@@ -76,36 +97,34 @@ class Parser
     t
   end
 
-  def outputter(root)
-    stack = []
-    output = ''
-    output += "<#{root.type} #{root.attributes}> \n #{root.text_before}"
-    stack << root
-    current_node = root
-    until stack.empty?
-      if current_node.children == nil
-        output += "<#{current_node.type} #{current_node.attributes}> \n #{current_node.text_before}"
-        stack << current_node
-      else
-        output += "<#{current_node.type} #{current_node.attributes}> \n #{current_node.text_before}"
-        stack << current_node
-
+  def outputter(tag)
+    if tag.children == []
+      @output += '"  " * #{tag.depth}' + "<#{tag.type} #{tag.attributes}> #{tag.text_before} #{tag.text_after} </#{tag.type}>\n"
+      return
+    else
+      @output += '"  " * #{tag.depth}' + "<#{tag.type} #{tag.attributes}> #{tag.text_before} \n"
+      tag.children.each do |child|
+        outputter(child)
       end
+      @output += "#{tag.text_after} </#{tag.type}>\n"
     end
-        # current_node.children.each do |child|
-        #   output += "<#{child.type} #{child.attributes}> \n #{child.text_before}"
-        # end
-        # stack << child
+    @output
   end
 
 
 
 end
 
-t = Parser.new("<div>  div text before  <p>    p text  </p> <div>    more div text  </div>  div text after</div>")
+h = '<html>  <head>    <title>      This is a test page    </title>  </head>  <body>    <div class="top-div">      Im an outer div!!!      <div class="inner-div">        Im an inner div!!! I might just <em>emphasize</em> some text.      </div>      I am EVEN MORE TEXT for the SAME div!!!    </div>    <main id="main-area">      <header class="super-header">        <h1 class="emphasized">          Welcome to the test doc!        </h1>        <h2>          This document contains data        </h2>      </header>      <ul>        Here is the data:        <li>Four list items</li>        <li class="bold funky important">One unordered list</li>        <li>One h1</li>        <li>One h2</li>        <li>One header</li>        <li>One main</li>        <li>One body</li>        <li>One html</li>        <li>One title</li>        <li>One head</li>        <li>One doctype</li>        <li>Two divs</li>        <li>And infinite fun!</li>      </ul>    </main>  </body></html>'
+
+t = Parser.new(h)
 
 t.parser_script
-p t.root
+
+puts t.outputter(t.root)
+#   def load_html
+    # puts str = File.readlines('test.html').map(&:chomp).join
+  # end
 # puts t.outputter(t.root)
 
   # parse_tag("<p class='foo bar' id='baz' name='fozzie'>")
@@ -121,3 +140,5 @@ p t.root
   #   html = load_html
   #   html.match
   # end
+
+
