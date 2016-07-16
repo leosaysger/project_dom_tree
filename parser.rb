@@ -99,10 +99,12 @@ class Parser
 
   def outputter(tag)
     if tag.children == []
-      @output += '"  " * #{tag.depth}' + "<#{tag.type} #{tag.attributes}> #{tag.text_before} #{tag.text_after} </#{tag.type}>\n"
+      @output += ("  " * tag.depth)
+      @output += "<#{tag.type} #{tag.attributes}> #{tag.text_before} #{tag.text_after} </#{tag.type}>\n"
       return
     else
-      @output += '"  " * #{tag.depth}' + "<#{tag.type} #{tag.attributes}> #{tag.text_before} \n"
+      @output += ("  " * tag.depth)
+      @output += "<#{tag.type} #{tag.attributes}> #{tag.text_before} \n"
       tag.children.each do |child|
         outputter(child)
       end
