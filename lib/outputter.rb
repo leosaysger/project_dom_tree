@@ -38,4 +38,13 @@ class Outputter
     @output
   end
 
+  def save(output)
+    filename = 'save.html'
+    File.open(filename, 'w') do |file|
+      file.puts output
+    end
+    puts "Saved!"
+  end
+
+
 end

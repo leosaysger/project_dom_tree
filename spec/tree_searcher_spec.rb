@@ -15,8 +15,9 @@ describe TreeSearcher do
     end
 
     describe '#search_children' do
-      it 'should return an array of Tags' do
+      it 'should return an array' do
         expect(searcher.search_children(parser.root, 'class', 'top-div')).to be_a(Array)
+        binding.pry
       end
     end
 

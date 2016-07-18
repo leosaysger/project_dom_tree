@@ -78,16 +78,21 @@ class Parser
   end
 end
 
+# loading files to be parsed
 def load_html
   File.readlines('./test.html').map(&:chomp).join
 end
+
+#
+# testing
+#
 
 def test_outputter
   t = Parser.new(load_html)
   o = Outputter.new
   t.parse_script
-  p t.root
-  puts o.output(t.root)
+  output = o.output(t.root)
+  o.save(output)
 end
 
 def test_renderer
@@ -101,4 +106,4 @@ def test_searcher
 
 end
 
-test_renderer
+# test_outputter
