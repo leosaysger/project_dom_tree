@@ -91,8 +91,10 @@ def test_outputter
   t = Parser.new(load_html)
   o = Outputter.new
   t.parse_script
-  output = o.output(t.root)
-  o.save(output)
+  print t.root
+  # output = o.output(t.root)
+  # p output
+  # o.save(output)
 end
 
 def test_renderer
@@ -102,8 +104,4 @@ def test_renderer
   r.render
 end
 
-def test_searcher
-
-end
-
-# test_outputter
+test_outputter

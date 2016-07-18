@@ -14,6 +14,9 @@ describe TreeSearcher do
       it 'should return an array' do
         expect(searcher.search_by(parser.root, 'class', 'top-div').length).to eq(1)
       end
+      it 'should return an array when a string is searched' do
+        expect(searcher.search_by(parser.root, 'text', 'One').length).to eq(10)
+      end
     end
 
     describe '#search_children' do
@@ -28,6 +31,4 @@ describe TreeSearcher do
       end
     end
   end
-
-
 end
