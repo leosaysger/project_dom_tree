@@ -1,5 +1,3 @@
-
-
 class Outputter
 
   def initialize

@@ -1,6 +1,7 @@
 require_relative 'outputter'
 require_relative 'tag'
 require_relative 'node_renderer'
+require_relative 'tree_searcher'
 require 'pry'
 
 
@@ -78,7 +79,7 @@ class Parser
 end
 
 def load_html
-  File.readlines('test.html').map(&:chomp).join
+  File.readlines('./test.html').map(&:chomp).join
 end
 
 def test_outputter
@@ -96,5 +97,8 @@ def test_renderer
   r.render
 end
 
+def test_searcher
+
+end
 
 test_renderer
