@@ -1,36 +1,13 @@
 class TreeSearcher
 
-
   def initialize(tree)
     @tree = tree
   end
 
-  # def check_attributes(child, str)
-  #   ans = []
-  #   if child.attributes[type] == str
-  #     ans << child
-  #   elsif child.attributes[type].is_a?(Array)
-  #     ans << child if child.attributes[type].include?(str)
-  #   end
-  #   ans
-  # end
-
-
-  def search_by(type, str, node = @tree)
-    stack[node]
+  def search_by(node = @tree, type, str)
     ans = []
-    until stack.empty?
-      current = stack.pop
-      current.children.each do |child|
-        if child.attributes[type] == str
-          ans << child
-        elsif child.attributes[type].is_a?(Array)
-          ans << child if child.attributes[type].include?(str)
-        end
-        stack << child
-      end
-    end
-    ans
+    ans << check_node(node, type, str) if check_node(node, type, str)
+    ans += search_children(node, type, str)
   end
 
   def search_children(node, type, str)
@@ -39,29 +16,38 @@ class TreeSearcher
     until stack.empty?
       current = stack.pop
       current.children.each do |child|
-        if child.attributes[type] == str
-          ans << child
-        elsif child.attributes[type].is_a?(Array)
-          ans << child if child.attributes[type].include?(str)
-        end
+        ans << check_node(child, type, str) if check_node(child, type, str)
         stack << child
       end
     end
     ans
   end
 
+  def check_node(node, type, str)
+    if node.attributes[type] == str
+      return node
+    elsif node.attributes[type].is_a?(Array)
+      return child if node.attributes[type].include?(str)
+    end
+  end
+
   def search_ancestors(node, type, str)
-
-    queue = [@tree]
-    until current.depth > max
-      current = queue.shift
-      current.children.each do |child|
-
-        queue << child
+    stack = [@tree]
+    ans = []
+    ans << check_node(@tree, type, str) if check_node(@tree, type, str)
+    bubble = false
+    until stack.empty?
+      current = stack.pop
+      if current.children.any? {|n| n == node} || bubble == true
+        bubble = true
+        ans << check_node(current, type, str) if check_node(current, type, str)
+      else
+        current.children.each { |child|  stack << child }
       end
     end
-
+    ans
   end
+
 
 
 end

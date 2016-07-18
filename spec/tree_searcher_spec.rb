@@ -8,24 +8,26 @@ describe TreeSearcher do
   end
 
   describe 'searches' do
-    let(:searcher){ TreeSearcher.new(load_html) }
+    let(:searcher){ TreeSearcher.new(parser.root) }
 
     describe '#search_by' do
-      it 'should return a Tag object'
+      it 'should return an array' do
+        expect(searcher.search_by(parser.root, 'class', 'top-div').length).to eq(1)
+      end
     end
 
     describe '#search_children' do
-      it 'should return an array' do
-        expect(searcher.search_children(parser.root, 'class', 'top-div')).to be_a(Array)
-        binding.pry
+      it 'should return an array of length 2' do
+        expect(searcher.search_children(parser.root, 'id', 'thing').length).to eq(2)
       end
     end
 
     describe '#search_by' do
-      it 'should return an array of Tags'
+      it 'should return an array' do
+        expect(searcher.search_ancestors(parser.root.children[0].children[0], 'id', 'test').length).to eq(2)
+      end
     end
   end
-
 
 
 end
