@@ -11,6 +11,8 @@ class Parser
 
   def initialize(str)
     @str = str
+    parse_script
+    @search = TreeSearcher.new(@root)
   end
 
   def parse_script
@@ -44,14 +46,12 @@ class Parser
     @str.gsub!(/^<.*?>/, '')
   end
 
-  # get text until '<'
   def get_text
     regex = /^[^<]*/
     text = @str[regex]
     @str.gsub!(regex,'')
     text.strip
   end
-
 
   def parse_tag
     tags = {}
@@ -76,6 +76,17 @@ class Parser
     delete_tag
     t
   end
+
+  # def modify_tag(tag, type, str)
+  #   result = search.search_by(tag, type, str)
+  #   result.each do |tag|
+  #     if type == "text"
+  #     else
+  #     tag.
+  #   end
+  # end
+
+
 end
 
 # loading files to be parsed
@@ -89,12 +100,12 @@ end
 
 def test_outputter
   t = Parser.new(load_html)
-  # o = Outputter.new
-  t.parse_script
-  print t.root
-  # output = o.output(t.root)
+  o = Outputter.new
+  # t.parse_script
+  # print t.root
+  output = o.output(t.root)
   # p output
-  # o.save(output)
+  o.save(output)
 end
 
 def test_renderer

@@ -25,7 +25,7 @@ class TreeSearcher
 
   def check_node(node, type, str)
     if type == "text"
-      return node if node.text_before.include?(str) || node.text_after.include?(str)
+      return node if str.match(node.text_before) || str.match(node.text_after)
     elsif node.attributes[type] == str
       return node
     elsif node.attributes[type].is_a?(Array)
